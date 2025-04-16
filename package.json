@@ -1,6 +1,6 @@
 {
   "name": "@respond-run/manifest",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Minimal utility for loading Vite's manifest.json in Cloudflare Workers and other edge environments",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
