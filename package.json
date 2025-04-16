@@ -1,0 +1,32 @@
+{
+  "name": "@respond-run/manifest",
+  "version": "0.2.0",
+  "description": "Minimal utility for loading Vite's manifest.json in Cloudflare Workers and other edge environments",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "cloudflare",
+    "vite",
+    "router",
+    "workers",
+    "filesystem-routing"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
