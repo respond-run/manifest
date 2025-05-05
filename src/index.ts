@@ -2,13 +2,20 @@ let cachedManifest: Record<string, any> | null = null;
 
 export interface ManifestEntry {
   file: string;
+  src: string;
+  name?: string;
+  isEntry?: boolean;
+  isDynamicEntry?: boolean;
   css?: string[];
-  imports?: string[];
+  dynamicImports?: string[];
+  assets?: string[];
 }
 
-export interface ClientEntry {
-  scriptPath: string;
-  stylePath?: string;
+/**
+ * Clear the cached manifest. Useful for testing.
+ */
+export function clearManifestCache(): void {
+  cachedManifest = null;
 }
 
 /**
@@ -23,25 +30,28 @@ export async function getManifest(fetchAsset: (path: string) => Promise<Response
       cachedManifest = await res.json();
       return cachedManifest;
     }
-  } catch {
-    // Silent fail in dev mode
+  } catch (error) {
+    cachedManifest = null;
+    return null;
   }
 
+  cachedManifest = null;
   return null;
 }
 
 /**
- * Resolves the script/style paths for the main client entrypoint.
+ * Finds the first manifest entry whose key contains the given match string.
+ * @param matchString The string to search for in manifest entry keys
+ * @param fetchAsset Function to fetch assets
+ * @returns The first matching manifest entry or null if no match is found
  */
-export async function getClientEntry(fetchAsset: (path: string) => Promise<Response>): Promise<ClientEntry> {
-  const fallback: ClientEntry = { scriptPath: '/src/client.ts' };
+export async function getManifestEntry(
+  matchString: string,
+  fetchAsset: (path: string) => Promise<Response>
+): Promise<ManifestEntry | null> {
   const manifest = await getManifest(fetchAsset);
-  const entry = manifest?.['src/client.ts'];
+  if (!manifest) return null;
 
-  if (!entry) return fallback;
-
-  return {
-    scriptPath: '/' + entry.file,
-    stylePath: entry.css?.[0] ? '/' + entry.css[0] : undefined,
-  };
+  const entry = Object.entries(manifest).find(([key]) => key.includes(matchString));
+  return entry ? entry[1] : null;
 }
